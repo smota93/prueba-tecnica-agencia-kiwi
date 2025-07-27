@@ -74,7 +74,7 @@ export default function LoginForm() {
           </div>
 
           {/* Social Media Buttons */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-row md:flex-col gap-3">
             <Button
               className="w-full text-black bg-gray-100"
             >
@@ -84,7 +84,8 @@ export default function LoginForm() {
                 width={20}
                 height={20}
               />
-              <span className="ml-3">Continue with Google</span>
+              <span className="ml-3 hidden md:inline">Continue with </span>
+              <span className="ml-3 md:ml-1">Google</span>
             </Button>
             <Button
               className="w-full text-black bg-gray-100"
@@ -95,7 +96,8 @@ export default function LoginForm() {
                 width={20}
                 height={20}
               />
-              <span className="ml-3">Continue with Facebook</span>
+              <span className="ml-3 hidden md:inline">Continue with </span>
+              <span className="ml-3 md:ml-1">Facebook</span>
             </Button>
           </div>
 
