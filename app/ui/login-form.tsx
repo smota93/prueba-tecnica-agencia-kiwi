@@ -6,9 +6,9 @@ import Image from 'next/image';
 
 export default function LoginForm() {
   return (
-    <form className="w-1/2 flex flex-col justify-between h-screen py-8 px-6">
+    <form className="w-full md:w-1/2 flex flex-col justify-between h-screen md:py-6 px-6">
       <div className="flex flex-col items-center">
-        <div className="w-full mt-15">
+        <div className="w-full md:mt-15">
           {/* Welcome message */}
           <h1 className={`${lusitana.className} antialiased mb-3 text-2xl text-left`}>
             Welcome Back 👋
@@ -115,7 +115,7 @@ export default function LoginForm() {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-center">
+      <div className="flex justify-center pb-5 md:pb-0">
         <span className="text-sm text-gray-400">© 2023 ALL RIGHTS RESERVED</span>
       </div>
     </form>
