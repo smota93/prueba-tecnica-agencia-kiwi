@@ -5,7 +5,7 @@ export default function Logo() {
     <div
       className={`${poppins.className} flex flex-row justify-center items-center leading-none text-black`}
     >
-      <p className="text-[24px]"><span className="font-bold">Horizon</span> <span className="font-normal">Free</span></p>
+      <p className="text-lg sm:text-xl md:text-2xl lg:text-[24px]"><span className="font-bold">Horizon</span> <span className="font-normal">Free</span></p>
     </div>
   );
 }
