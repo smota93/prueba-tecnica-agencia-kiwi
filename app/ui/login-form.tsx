@@ -1,12 +1,69 @@
-import { lusitana } from '@/app/ui/fonts';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Input } from './input'
-import { Button } from './button';
+"use client"
+
 import Image from 'next/image';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { lusitana } from '@/app/ui/fonts';
+
+import { Input } from './input';
+import { Button } from './button';
+import { login } from '../lib/data';
+import { LoginData } from '../lib/definitions';
 
 export default function LoginForm() {
+  const router = useRouter();
+  const [formData, setFormData] = useState<LoginData>({
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [googleLoading, setGoogleLoading] = useState<boolean>(false);
+  const [facebookLoading, setFacebookLoading] = useState<boolean>(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await login(formData);
+      console.log('Login successful');
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+      setError(error instanceof Error ? error.message : 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 3000);
+  };
+
+  const handleFacebookLogin = () => {
+    setFacebookLoading(true);
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 3000);
+  };
+
   return (
-    <form className="w-full md:w-1/2 flex flex-col justify-between h-screen md:py-6 px-6">
+    <div className="w-full md:w-1/2 flex flex-col justify-between h-screen md:py-6 px-6">
+      <form onSubmit={handleSubmit}>
       <div className="flex flex-col items-center">
         <div className="w-full md:mt-15">
           {/* Welcome message */}
@@ -31,6 +88,8 @@ export default function LoginForm() {
                 id="email"
                 type="email"
                 name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                 placeholder="Enter your email address"
                 required
               />
@@ -48,6 +107,8 @@ export default function LoginForm() {
                 id="password"
                 type="password"
                 name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
                 placeholder="At least 8 characters"
                 required
                 minLength={8}
@@ -59,67 +120,83 @@ export default function LoginForm() {
               </a>
             </div>
           </div>
-          <Button className="mt-4 w-full bg-cyan-950 text-white">
-            Sign In
-          </Button>
 
-          {/* Divider */}
-          <div className="relative my-10">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-gray-500">Or</span>
-            </div>
-          </div>
-
-          {/* Social Media Buttons */}
-          <div className="flex flex-row md:flex-col gap-3">
+            {/* Error Notification */}
+            {error && (
+              <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
             <Button
-              className="w-full text-black bg-gray-100"
+              type="submit"
+              disabled={isLoading}
+              className="mt-4 w-full bg-cyan-950 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Image
-                src="/google.svg"
-                alt="Google"
-                width={20}
-                height={20}
-              />
-              <span className="ml-3 hidden md:inline">Continue with </span>
-              <span className="ml-3 md:ml-1">Google</span>
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
-            <Button
-              className="w-full text-black bg-gray-100"
-            >
-              <Image
-                src="/facebook.svg"
-                alt="Facebook"
-                width={20}
-                height={20}
-              />
-              <span className="ml-3 hidden md:inline">Continue with </span>
-              <span className="ml-3 md:ml-1">Facebook</span>
-            </Button>
-          </div>
 
-          {/* Sign Up */}
-          <div className="flex justify-center mt-10">
-            <span>Don't you have an account?
-              <a href="#" className="ml-1 text-blue-600 hover:text-blue-800">
-                Sign up
-              </a>
-            </span>
-          </div>
-
-          <div className="flex h-8 items-end space-x-1">
-            {/* Add form errors here */}
+            <div className="flex h-4 items-end space-x-1">
+              {/* Add form errors here */}
+            </div>
           </div>
         </div>
+      </form>
+
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="bg-white px-2 text-gray-500">Or</span>
+        </div>
+      </div>
+
+      {/* Social Media Buttons */}
+      <div className="flex flex-row md:flex-col gap-3">
+        <Button
+          className="w-full text-black bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleGoogleLogin}
+          disabled={googleLoading || facebookLoading}
+        >
+          <Image
+            src="/google.svg"
+            alt="Google"
+            width={20}
+            height={20}
+          />
+          <span className="ml-3 hidden md:inline">{googleLoading ? 'Signing in...' : 'Continue with '}</span>
+          <span className="ml-3 md:ml-1">{googleLoading ? '' : 'Google'}</span>
+        </Button>
+        <Button
+          className="w-full text-black bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleFacebookLogin}
+          disabled={googleLoading || facebookLoading}
+        >
+          <Image
+            src="/facebook.svg"
+            alt="Facebook"
+            width={20}
+            height={20}
+          />
+          <span className="ml-3 hidden md:inline">{facebookLoading ? 'Signing in...' : 'Continue with '}</span>
+          <span className="ml-3 md:ml-1">{facebookLoading ? '' : 'Facebook'}</span>
+        </Button>
+      </div>
+
+      {/* Sign Up */}
+      <div className="flex justify-center mt-2">
+        <span>Don't you have an account?
+          <a href="#" className="ml-1 text-blue-600 hover:text-blue-800">
+            Sign up
+          </a>
+        </span>
       </div>
 
       {/* Footer */}
       <div className="flex justify-center pb-5 md:pb-0">
         <span className="text-sm text-gray-400">© 2023 ALL RIGHTS RESERVED</span>
       </div>
-    </form>
+    </div>
   );
 }

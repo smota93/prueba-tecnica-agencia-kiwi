@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import LoginForm from "@/app/ui/login-form"
 
-export default function Page() {
+export default function Login() {
   return (
     <>
       <div className="flex flex-col items-center justify-center w-full md:flex-row">
